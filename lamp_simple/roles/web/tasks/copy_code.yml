@@ -2,10 +2,19 @@
 # These tasks are responsible for copying the latest dev/production code from
 # the version control system.
 
-- name: Copy the code from repository
+# Since the /var/www/html/ directory is already created by the install_httpd.yml, and
+# the git clone expects the destination 'html' directory to be empty, we need to
+# do this is a couple steps: clone to a temporary location and then move the files
+- name: Clone the repository to a temporary directory
   git:
     repo: "{{ repository }}"
+    dest: /tmp/repo
+
+- name: Copy the files to /var/www/html
+  copy:
+    src: /tmp/repo/
     dest: /var/www/html/
+    remote_src: yes
 
 - name: Creates the index.php file
   template:
