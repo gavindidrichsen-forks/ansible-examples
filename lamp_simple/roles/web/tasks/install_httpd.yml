@@ -2,16 +2,17 @@
 # These tasks install http and the php modules.
 
 - name: Install http and php etc
-  yum:
+  package:
     name: "{{ item }}"
     state: present
   with_items:
-   - httpd
+   - apache2
    - php
    - php-mysql
    - git
-   - libsemanage-python
-   - libselinux-python
+   - python3-semanage
+   - python3-selinux
+   - policycoreutils
 
 - name: insert iptables rule for httpd
   lineinfile:
@@ -25,13 +26,18 @@
 
 - name: http service state
   service:
-    name: httpd
+    name: apache2
     state: started
     enabled: yes
 
+- name: Check SELinux status
+  command: getenforce
+  register: selinux_status
+  ignore_errors: true
+
 - name: Configure SELinux to allow httpd to connect to remote database
   seboolean:
-    name: httpd_can_network_connect_db
+    name: apache2_can_network_connect_db
     state: true
     persistent: yes
-  when: sestatus.rc != 0
+  when: selinux_status.stdout == "Enforcing"

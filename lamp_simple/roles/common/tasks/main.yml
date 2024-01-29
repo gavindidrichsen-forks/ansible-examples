@@ -1,27 +1,19 @@
----
-# This playbook contains common plays that will be run on all nodes.
-
-- name: Install ntp
-  yum:
-    name: ntp
+- name: Install chrony
+  package:
+    name: chrony
     state: present
-  tags: ntp
+  tags: chrony
 
-- name: Configure ntp file
+- name: Configure chrony file
   template:
-    src: ntp.conf.j2
-    dest: /etc/ntp.conf
-  tags: ntp
-  notify: restart ntp
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+  tags: chrony
+  notify: restart chrony
 
-- name: Start the ntp service
+- name: Start the chrony service
   service:
-    name: ntpd
+    name: chronyd
     state: started
     enabled: yes
-  tags: ntp
-
-- name: test to see if selinux is running
-  command: getenforce
-  register: sestatus
-  changed_when: false
+  tags: chrony
