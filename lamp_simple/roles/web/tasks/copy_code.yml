@@ -10,11 +10,14 @@
     repo: "{{ repository }}"
     dest: /tmp/repo
 
+# hack: this causes a change on every run since "remote_src: yes" is not idempotent
+# therefore, I'm adding "changed_when: False" to ignore the change...
 - name: Copy the files to /var/www/html
   copy:
     src: /tmp/repo/
     dest: /var/www/html/
     remote_src: yes
+  changed_when: False
 
 - name: Creates the index.php file
   template:
