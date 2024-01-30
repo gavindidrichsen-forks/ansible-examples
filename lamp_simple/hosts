@@ -1,7 +1,7 @@
 [webservers]
-web3
+ansible_pocs-node2-1 ansible_connection=docker
 
 [dbservers]
-web2
+ansible_pocs-node3-1 ansible_connection=docker
 
 
